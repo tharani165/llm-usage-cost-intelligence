@@ -1,0 +1,90 @@
+=== BATCH 1: generated rows=20200 expected silver=19740
+bronze=20200 silver=19740 quarantine=460
+replay of batch_001: bronze rows 20200 -> 20200
+=== AFTER BATCH 2: bronze=22380 silver=21770 quarantine=610
+
+-- reconciliation --
+[PASS] bronze_rows == silver_rows + quarantine_rows: expected=22380 actual=22380
+[PASS] silver request_ids are unique: expected=21770 actual=21770
+[PASS] priced rows == silver rows (no join fan-out): expected=21770 actual=21770
+[PASS] priced + unpriced + not_billed == silver rows: expected=21770 actual=21770
+[PASS] gold_usage_daily requests == silver rows: expected=21770 actual=21770
+[PASS] gold_usage_daily cost == silver priced cost: expected=109.70064685 actual=109.70064685
+[PASS] gold_usage_daily input tokens == silver: expected=14557587 actual=14557587
+[PASS] gold_usage_daily output tokens == silver: expected=7550692 actual=7550692
+[PASS] gold_model_performance requests == silver rows: expected=21770 actual=21770
+[PASS] gold_model_performance cost == silver priced cost: expected=109.70064685 actual=109.70064685
+[PASS] gold_budget_utilization spend == silver priced cost: expected=109.70064685 actual=109.70064685
+[PASS] rows where total != input + output cost: expected=0 actual=0
+[PASS] priced rows with NULL cost: expected=0 actual=0
+[PASS] unpriced rows with non-NULL cost (silent zero): expected=0 actual=0
+
+-- quality metrics --
+pricing_coverage     not_billed                   419
+pricing_coverage     priced                       19936
+pricing_coverage     unpriced                     1415
+quarantine_category  superseded_duplicate         350
+quarantine_category  validation_failure           260
+rejection_reason     invalid_status               60
+rejection_reason     invalid_timestamp            56
+rejection_reason     missing_application          17
+rejection_reason     missing_model                16
+rejection_reason     missing_provider             17
+rejection_reason     missing_request_id           17
+rejection_reason     missing_team                 17
+rejection_reason     negative_input_tokens        30
+rejection_reason     negative_output_tokens       30
+soft_warning         high_latency                 100
+soft_warning         high_output_tokens           1
+soft_warning         high_retry_count             230
+soft_warning         late_arrival                 80
+volume               bronze_rows                  22380
+volume               quarantine_rows              610
+volume               silver_rows                  21770
+
+-- model performance --
+{'provider': 'provider_alpha', 'model': 'model_economy', 'requests': 7280, 'success_requests': 6734, 'failed_requests': 546, 'unpriced_requests': 0, 'avg_latency_ms': 1998.6799450549452, 'p95_latency_ms': 2104.199999999997, 'p95_latency_success_ms': 1923.699999999999, 'total_estimated_cost': Decimal('2.20867935'), 'failure_rate': 0.075, 'cost_per_successful_request': Decimal('0.00032799')}
+{'provider': 'provider_alpha', 'model': 'model_standard', 'requests': 5701, 'success_requests': 5235, 'failed_requests': 466, 'unpriced_requests': 0, 'avg_latency_ms': 1714.3169619365024, 'p95_latency_ms': 2125.0, 'p95_latency_success_ms': 1878.3000000000002, 'total_estimated_cost': Decimal('25.73423150'), 'failure_rate': 0.08174004560603403, 'cost_per_successful_request': Decimal('0.00491580')}
+{'provider': 'provider_beta', 'model': 'model_advanced', 'requests': 2931, 'success_requests': 2697, 'failed_requests': 234, 'unpriced_requests': 0, 'avg_latency_ms': 2189.844080518594, 'p95_latency_ms': 2210.5, 'p95_latency_success_ms': 1949.3999999999996, 'total_estimated_cost': Decimal('50.59439000'), 'failure_rate': 0.07983623336745138, 'cost_per_successful_request': Decimal('0.01875951')}
+{'provider': 'provider_beta', 'model': 'model_standard', 'requests': 4417, 'success_requests': 4069, 'failed_requests': 348, 'unpriced_requests': 0, 'avg_latency_ms': 1854.5182250396197, 'p95_latency_ms': 2107.999999999998, 'p95_latency_success_ms': 1919.6, 'total_estimated_cost': Decimal('31.16334600'), 'failure_rate': 0.07878650667874122, 'cost_per_successful_request': Decimal('0.00765872')}
+{'provider': 'provider_gamma', 'model': 'model_experimental', 'requests': 1441, 'success_requests': 1320, 'failed_requests': 121, 'unpriced_requests': 1415, 'avg_latency_ms': 1727.0825815405967, 'p95_latency_ms': 2106.0, 'p95_latency_success_ms': 1943.1999999999998, 'total_estimated_cost': Decimal('0E-8'), 'failure_rate': 0.08396946564885496, 'cost_per_successful_request': None}
+
+-- budget utilization --
+{'application': 'code_assistant', 'year_month': '2025-01', 'estimated_spend': Decimal('24.00854670'), 'unpriced_requests': 314, 'monthly_budget': Decimal('60.0000'), 'budget_utilization': Decimal('0.4001'), 'budget_status': 'ok'}
+{'application': 'code_assistant', 'year_month': '2025-02', 'estimated_spend': Decimal('2.69653075'), 'unpriced_requests': 35, 'monthly_budget': Decimal('60.0000'), 'budget_utilization': Decimal('0.0449'), 'budget_status': 'ok'}
+{'application': 'document_summarizer', 'year_month': '2025-01', 'estimated_spend': Decimal('24.91495725'), 'unpriced_requests': 324, 'monthly_budget': Decimal('25.0000'), 'budget_utilization': Decimal('0.9966'), 'budget_status': 'warning'}
+{'application': 'document_summarizer', 'year_month': '2025-02', 'estimated_spend': Decimal('2.02977425'), 'unpriced_requests': 42, 'monthly_budget': Decimal('25.0000'), 'budget_utilization': Decimal('0.0812'), 'budget_status': 'ok'}
+{'application': 'internal_knowledge_assistant', 'year_month': '2025-01', 'estimated_spend': Decimal('25.00985565'), 'unpriced_requests': 313, 'monthly_budget': Decimal('30.0000'), 'budget_utilization': Decimal('0.8337'), 'budget_status': 'warning'}
+{'application': 'internal_knowledge_assistant', 'year_month': '2025-02', 'estimated_spend': Decimal('2.53845315'), 'unpriced_requests': 30, 'monthly_budget': Decimal('30.0000'), 'budget_utilization': Decimal('0.0846'), 'budget_status': 'ok'}
+{'application': 'support_assistant', 'year_month': '2025-01', 'estimated_spend': Decimal('26.13643840'), 'unpriced_requests': 323, 'monthly_budget': Decimal('40.0000'), 'budget_utilization': Decimal('0.6534'), 'budget_status': 'ok'}
+{'application': 'support_assistant', 'year_month': '2025-02', 'estimated_spend': Decimal('2.36609070'), 'unpriced_requests': 34, 'monthly_budget': Decimal('40.0000'), 'budget_utilization': Decimal('0.0592'), 'budget_status': 'ok'}
+
+-- SQL files executed against the local tables --
+[PASS] 01_cost_analysis.sql statement 1: 1 rows
+[PASS] 01_cost_analysis.sql statement 2: 32 rows
+[PASS] 01_cost_analysis.sql statement 3: 5 rows
+[PASS] 01_cost_analysis.sql statement 4: 5 rows
+[PASS] 01_cost_analysis.sql statement 5: 5 rows
+[PASS] 01_cost_analysis.sql statement 6: 32 rows
+[PASS] 01_cost_analysis.sql statement 7: 32 rows
+[PASS] 01_cost_analysis.sql statement 8: 32 rows
+[PASS] 01_cost_analysis.sql statement 9: 4 rows
+[PASS] 02_model_performance.sql statement 1: 5 rows
+[PASS] 02_model_performance.sql statement 2: 1 rows
+[PASS] 02_model_performance.sql statement 3: 5 rows
+[PASS] 02_model_performance.sql statement 4: 5 rows
+[PASS] 02_model_performance.sql statement 5: 4 rows
+[PASS] 02_model_performance.sql statement 6: 12 rows
+[PASS] 03_data_quality.sql statement 1: 1 rows
+[PASS] 03_data_quality.sql statement 2: 2 rows
+[PASS] 03_data_quality.sql statement 3: 9 rows
+[PASS] 03_data_quality.sql statement 4: 4 rows
+[PASS] 03_data_quality.sql statement 5: 1 rows
+[PASS] 03_data_quality.sql statement 6: 1 rows
+[PASS] 03_data_quality.sql statement 7: 50 rows
+[PASS] 03_data_quality.sql statement 8: 50 rows
+[PASS] 04_budget_monitoring.sql statement 1: 8 rows
+[PASS] 04_budget_monitoring.sql statement 2: 2 rows
+[PASS] 04_budget_monitoring.sql statement 3: 5 rows
+
+OVERALL:PASS

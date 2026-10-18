@@ -1,0 +1,31 @@
+%% Intended design. Not a depiction of a deployed system. Render: npx @mermaid-js/mermaid-cli -i architecture.mmd -o architecture.png
+flowchart LR
+    GEN["Synthetic generator<br/>(Python, seeded)"] --> LAND[("landing_usage_events<br/>batch_001, batch_002")]
+    CSV["model_pricing_example.csv<br/>(fictional prices)"] --> BP[("bronze_model_pricing")]
+    LAND -->|"append, idempotent per batch"| BE[("bronze_usage_events<br/>raw + lineage")]
+
+    subgraph Silver
+        BE --> V{"Normalise +<br/>hard rules"}
+        V -->|"fail"| Q[("quarantined_usage_events<br/>reasons + raw payload")]
+        V -->|"pass (soft warnings kept)"| D{"Deterministic<br/>dedupe on request_id"}
+        D -->|"superseded"| Q
+        D -->|"winner"| SE[("silver_usage_events")]
+        BP --> SP[("silver_model_pricing<br/>validated, effective-dated")]
+        SE --> PR["Price join + decimal cost"]
+        SP --> PR
+        PR --> PE[("silver_priced_usage_events<br/>priced / unpriced / not_billed")]
+    end
+
+    subgraph Gold
+        PE --> G1[("gold_usage_daily")]
+        PE --> G2[("gold_model_performance")]
+        PE --> G3[("gold_budget_utilization")]
+        BE --> G4[("gold_quality_metrics")]
+        Q --> G4
+        PE --> G4
+    end
+
+    G1 & G2 & G3 & G4 --> DASH["Databricks SQL<br/>dashboard (manual build)"]
+    G1 & G2 & G3 & G4 --> REC["Reconciliation checks<br/>fail the run on mismatch"]
+
+    LAND -.->|"incremental path: batch_002 = new + re-delivered + corrected + late"| BE

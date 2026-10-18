@@ -1,0 +1,14 @@
+# Copy to config/project.yml (git-ignored) and edit. Every key is optional;
+# omitted keys fall back to the defaults in src/llm_cost_intelligence/config.py.
+catalog: workspace          # a catalog you are allowed to create schemas in
+schema: llm_usage
+n_requests: 20000           # 1 .. 50000
+seed: 42
+high_latency_ms: 30000
+late_arrival_hours: 24
+# Synthetic monthly budgets per application (illustrative currency units)
+monthly_budgets:
+  support_assistant: 40.0
+  code_assistant: 60.0
+  document_summarizer: 25.0
+  internal_knowledge_assistant: 30.0

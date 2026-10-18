@@ -1,0 +1,6 @@
+provider,model,input_price_per_million_tokens,output_price_per_million_tokens,currency,pricing_version,effective_from,effective_to
+provider_alpha,model_economy,0.150000,0.600000,USD,v1,2025-01-01,
+provider_alpha,model_standard,2.500000,10.000000,USD,v1,2025-01-01,2025-01-15
+provider_alpha,model_standard,2.000000,8.000000,USD,v2,2025-01-16,
+provider_beta,model_standard,3.000000,15.000000,USD,v1,2025-01-01,
+provider_beta,model_advanced,10.000000,30.000000,USD,v1,2025-01-01,
