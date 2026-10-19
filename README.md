@@ -15,7 +15,7 @@ logs into validated, cost-enriched, reconciled analytics.
 | Generator, validation, dedup, pricing, Gold metrics, incremental logic | ✅ run locally (Spark 4.2, Java 17) |
 | Unit/integration tests | ✅ see [Test results](#test-results) |
 | End-to-end local run + all `sql/*.sql` statements | ✅ [`evidence/local_validation_results.txt`](evidence/local_validation_results.txt) |
-| Notebooks `00`–`05` inside Databricks Free Edition (Delta tables, serverless) | ⚠️ **not yet executed**: written for it, never run there |
+| Notebooks `00`–`05` inside Databricks Free Edition (Delta tables, serverless) | ⚠️ **not yet executed**: written for it, never run there. Checklist: [`docs/databricks_validation.md`](docs/databricks_validation.md) |
 | Databricks SQL dashboard | ❌ not built (spec + queries only: [`dashboards/dashboard_spec.md`](dashboards/dashboard_spec.md)) |
 | `architecture.png` | ❌ not rendered (source is [`architecture/architecture.mmd`](architecture/architecture.mmd), shown below) |
 
@@ -137,8 +137,9 @@ From [`evidence/local_validation_results.txt`](evidence/local_validation_results
 
 ## Test results
 `python -m pytest -v` on the author's machine (Windows, Python 3.13, PySpark 4.2.0, Java 17):
-**62 passed, 0 failed, 0 skipped in 749 s** (full log: [`evidence/pytest_results.txt`](evidence/pytest_results.txt)).
+**63 passed, 0 failed, 0 skipped, 1 warning (a pandas 3 `FutureWarning` from PySpark) in 1,112 s (18 min 31 s)** (full log: [`evidence/pytest_results.txt`](evidence/pytest_results.txt)).
 An earlier full run had 1 failure (budget stored with 2 decimals rounded a test value); it was fixed and the suite rerun.
+The suite was rerun after a generator fix (`n_requests=100` previously crashed batch 2) and a new regression test; `validate_project.py` was rerun too and its output is unchanged.
 Coverage: generator (reproducibility, defect counts), validation rules, dedup (exact/conflicting/order-independent/retries),
 pricing (manual cost, zero tokens, decimals, missing price, effective dates, invalid/overlapping config), Gold metrics,
 Silver↔Gold reconciliation, and incremental batches (replay, late, corrections).

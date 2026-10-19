@@ -46,6 +46,15 @@ def test_incremental_batch_composition():
     assert all(r["batch_id"] == "batch_002" for r in rows2)
 
 
+def test_incremental_batch_works_for_small_batch_one():
+    """Default re-delivery sizes (100 + 50) exceed the clean rows of a 100-request batch 1."""
+    rows1, _ = dg.generate_initial_batch(dg.GeneratorConfig(100))
+    rows2, exp2 = dg.generate_incremental_batch(rows1)
+    assert len(rows2) == exp2["raw_rows"]
+    assert exp2["exact_redeliveries"] + exp2["corrections"] <= 100
+    assert exp2["exact_redeliveries"] >= 1 and exp2["corrections"] >= 1
+
+
 def test_config_bounds():
     with pytest.raises(ValueError):
         ProjectConfig(n_requests=50_001)

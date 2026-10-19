@@ -165,6 +165,10 @@ def generate_incremental_batch(
     rng = random.Random(seed)
     id_counts = Counter(r["request_id"] for r in batch1_rows)
     safe = [r for r in batch1_rows if is_clean_raw(r) and id_counts[r["request_id"]] == 1]
+    if n_exact + n_corrections > len(safe):  # small batch 1 (e.g. 100 rows): shrink re-deliveries proportionally
+        total = n_exact + n_corrections
+        n_exact = len(safe) * n_exact // total
+        n_corrections = min(n_corrections, len(safe) - n_exact)
     chosen = rng.sample(safe, n_exact + n_corrections)
     next_id = max(int(r["request_id"][4:]) for r in batch1_rows if r["request_id"]) + 1
     batch_time = BATCH2_START + timedelta(hours=6)
